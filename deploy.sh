@@ -56,6 +56,7 @@ kubectl apply -f elasticsearch-config.yaml
 kubectl apply -f logstash-config-fixed.yaml
 kubectl apply -f kibana-config.yaml
 
+
 # Deploy Elasticsearch first
 echo "🔍 Deploying Elasticsearch..."
 kubectl apply -f elasticsearch.yaml
@@ -87,6 +88,14 @@ kubectl apply -f logstash.yaml
 # Wait for Logstash to be ready
 echo "⏳ Waiting for Logstash to be ready..."
 kubectl wait --for=condition=available --timeout=300s deployment/logstash -n elk-stack
+
+# Setup Kibana system configuration
+echo "⚙️  Setting up Kibana system configuration..."
+kubectl apply -f kibana-system-setup.yaml
+
+# Wait for Kibana system setup to complete
+echo "⏳ Waiting for Kibana system setup to complete..."
+kubectl wait --for=condition=complete --timeout=300s job/kibana-system-setup -n elk-stack
 
 # Deploy Kibana
 echo "📈 Deploying Kibana..."
